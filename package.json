@@ -1,0 +1,35 @@
+{
+  "name": "babel-plugin-picture-import-replacer",
+  "version": "1.0.0",
+  "description": "Babel plugin for transforming picture import into variable contains src and srcSet",
+  "author": {
+    "name": "Pavel Ivanov",
+    "email": "grammka@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pavelivanov/babel-plugin-picture-import-replacer.git"
+  },
+  "keywords": [
+    "picture",
+    "import",
+    "src",
+    "srcSet",
+    "2x",
+    "3x",
+    "plugin"
+  ],
+  "license": "MIT",
+  "main": "./lib",
+  "scripts": {
+    "test": "node ./test/run.js ./test/example.js",
+    "build": "babel ./src -d ./lib"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-core": "^6.10.4",
+    "babel-plugin-add-module-exports": "^0.2.1",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1"
+  }
+}
