@@ -141,13 +141,13 @@ export default function (babel) {
                             [
                               t.objectProperty(
                                 t.identifier('src'),
-                                t.stringLiteral('src'),
+                                t.identifier('src'),
                                 false,
                                 true,
                               ),
                               t.objectProperty(
                                 t.identifier('srcSet'),
-                                t.stringLiteral('srcSet'),
+                                t.identifier('srcSet'),
                                 false,
                                 true,
                               )
