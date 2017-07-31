@@ -12,16 +12,20 @@ import picture, { x2, x3 } from './images/icon.png'
 
 ```javascript
 const picture = (() => {
-  let src2x;
-  let src3x;
+  const imagePath = './images/icon.png';
+    
+  let src2x = "";
+  let src3x = "";
   
-  const src = require("./images/hamburger.svg");
+  const src = require(imagePath);
+  let srcSet = src;
   
-  src2x = src.replace(new RegExp("(.[a-z]+)$"), `@2x$1`);
-  src3x = src.replace(new RegExp("(.[a-z]+)$"), `@3x$1`);
+  src2x = require(imagePath.replace(new RegExp("(.[a-z]+)$"), `@2x$1`));
+  src3x = require(imagePath.replace(new RegExp("(.[a-z]+)$"), `@3x$1`));
   
-  const srcSet = `${src} ${src2x} ${src3x}`.trim();
-
+  if (src2x) srcSet += `, ${src2x}` 
+  if (src3x) srcSet += ` ${src3x}` 
+  
   return {
     src,
     srcSet
