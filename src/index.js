@@ -2,6 +2,9 @@ export default function (babel) {
 
   const { types: t } = babel
 
+  /*
+    const imagePath = './images/icon.png';
+   */
   const declareImageAssignment = (imagePath) =>
     t.variableDeclaration(
       'const',
@@ -13,6 +16,11 @@ export default function (babel) {
       ]
     )
 
+  /*
+    let src2x = '';
+    let src3x = '';
+    let srcSet = '';
+   */
   const srcSizeVariables = [
     t.variableDeclaration(
       'let',
@@ -31,9 +39,21 @@ export default function (babel) {
           t.stringLiteral(''),
         ),
       ]
-    )
+    ),
+    t.variableDeclaration(
+      'let',
+      [
+        t.variableDeclarator(
+          t.identifier('srcSet'),
+          t.stringLiteral(''),
+        ),
+      ]
+    ),
   ]
 
+  /*
+    const src = require(imagePath);
+   */
   const srcAssignment = t.variableDeclaration('const', [
     t.variableDeclarator(
       t.identifier('src'),
@@ -46,6 +66,10 @@ export default function (babel) {
     ),
   ])
 
+  /*
+    src2x = require(imagePath.replace(new RegExp("(.[a-z]+)$"), `@2x$1`));
+    src3x = require(imagePath.replace(new RegExp("(.[a-z]+)$"), `@3x$1`));
+   */
   const declareSrcSizeAssignments = (specifiers) =>
     specifiers.slice(1).map((specifier) => {
       const size = specifier.local.name.replace('x', '')
@@ -87,44 +111,82 @@ export default function (babel) {
       )
     })
 
-  const srcSetAssignment = t.variableDeclaration(
-    'const',
-    [
-      t.variableDeclarator(
-        t.identifier('srcSet'),
-        t.callExpression(
-          t.memberExpression(
-            t.templateLiteral(
-              [
-                t.templateElement({
-                  raw: '',
-                  cooked: '',
-                }, false),
-                t.templateElement({
-                  raw: ' ',
-                  cooked: ' ',
-                }, false),
-                t.templateElement({
-                  raw: ' ',
-                  cooked: ' ',
-                }, false),
-                t.templateElement({
-                  raw: '',
-                  cooked: '',
-                }, false),
-              ],
-              [
-                t.identifier('src'),
-                t.identifier('src2x'),
-                t.identifier('src3x'),
-              ]
-            ),
-            t.identifier('trim'),
-          ),
-          []
+  /*
+    let srcSet = src;
+   */
+  const srcSetAssignment = t.expressionStatement(
+    t.assignmentExpression(
+      '=',
+      t.identifier('srcSet'),
+      t.identifier('src')
+    )
+  )
+
+  // const srcSetAssignment = t.variableDeclaration(
+  //   'let',
+  //   [
+  //     t.variableDeclarator(
+  //       t.identifier('srcSet'),
+  //       t.callExpression(
+  //         t.memberExpression(
+  //           t.templateLiteral(
+  //             [
+  //               t.templateElement({
+  //                 raw: '',
+  //                 cooked: '',
+  //               }, false),
+  //               t.templateElement({
+  //                 raw: ' ',
+  //                 cooked: ' ',
+  //               }, false),
+  //               t.templateElement({
+  //                 raw: ' ',
+  //                 cooked: ' ',
+  //               }, false),
+  //               t.templateElement({
+  //                 raw: '',
+  //                 cooked: '',
+  //               }, false),
+  //             ],
+  //             [
+  //               t.identifier('src'),
+  //               t.identifier('src2x'),
+  //               t.identifier('src3x'),
+  //             ]
+  //           ),
+  //           t.identifier('trim'),
+  //         ),
+  //         []
+  //       )
+  //     )
+  //   ]
+  // )
+
+  const ifStatements = [ 2,3 ].map((num) =>
+    t.ifStatement(
+      t.identifier(`src${num}x`),
+      t.expressionStatement(
+        t.assignmentExpression(
+          '+=',
+          t.identifier('srcSet'),
+          t.templateLiteral(
+            [
+              t.templateElement({
+                raw: ' ',
+                cooked: ' ',
+              }, false),
+              t.templateElement({
+                raw: '',
+                cooked: '',
+              }, true),
+            ],
+            [
+              t.identifier(`src${num}x`),
+            ]
+          )
         )
       )
-    ]
+    )
   )
 
   const returnStatement = t.returnStatement(
@@ -177,6 +239,7 @@ export default function (babel) {
                       srcAssignment,
                       ...srcSizeAssignments,
                       srcSetAssignment,
+                      ...ifStatements,
                       returnStatement,
                     ]),
                     false
