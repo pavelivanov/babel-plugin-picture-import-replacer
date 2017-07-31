@@ -2,6 +2,17 @@ export default function (babel) {
 
   const { types: t } = babel
 
+  const declareImageAssignment = (imagePath) =>
+    t.variableDeclaration(
+      'const',
+      [
+        t.variableDeclarator(
+          t.identifier('imagePath'),
+          t.stringLiteral(imagePath),
+        ),
+      ]
+    )
+
   const srcSizeVariables = [
     t.variableDeclaration(
       'let',
@@ -23,18 +34,17 @@ export default function (babel) {
     )
   ]
 
-  const declareSrcAssignment = (imagePath) =>
-    t.variableDeclaration('const', [
-      t.variableDeclarator(
-        t.identifier('src'),
-        t.callExpression(
-          t.identifier('require'),
-          [
-            t.stringLiteral(imagePath)
-          ]
-        )
-      ),
-    ])
+  const srcAssignment = t.variableDeclaration('const', [
+    t.variableDeclarator(
+      t.identifier('src'),
+      t.callExpression(
+        t.identifier('require'),
+        [
+          t.identifier('imagePath')
+        ]
+      )
+    ),
+  ])
 
   const declareSrcSizeAssignments = (specifiers) =>
     specifiers.slice(1).map((specifier) => {
@@ -50,7 +60,7 @@ export default function (babel) {
             [
               t.callExpression(
                 t.memberExpression(
-                  t.identifier('src'),
+                  t.identifier('imagePath'),
                   t.identifier('replace'),
                 ),
                 [
@@ -149,9 +159,9 @@ export default function (babel) {
           && specifiers[0].type === 'ImportDefaultSpecifier'
           && specifiers[0].local && specifiers[0].local.name === 'picture'
         ) {
-          const imagePath           = path.node.source.value
-          const srcAssignment       = declareSrcAssignment(imagePath)
-          const srcSizeAssignments  = declareSrcSizeAssignments(specifiers)
+          const imagePath             = path.node.source.value
+          const imagePathAssignment   = declareImageAssignment(imagePath)
+          const srcSizeAssignments    = declareSrcSizeAssignments(specifiers)
 
           path.replaceWith(t.variableDeclaration(
             'const',
@@ -162,6 +172,7 @@ export default function (babel) {
                   t.arrowFunctionExpression(
                     [],
                     t.blockStatement([
+                      imagePathAssignment,
                       ...srcSizeVariables,
                       srcAssignment,
                       ...srcSizeAssignments,
