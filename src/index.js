@@ -122,46 +122,10 @@ export default function (babel) {
     )
   )
 
-  // const srcSetAssignment = t.variableDeclaration(
-  //   'let',
-  //   [
-  //     t.variableDeclarator(
-  //       t.identifier('srcSet'),
-  //       t.callExpression(
-  //         t.memberExpression(
-  //           t.templateLiteral(
-  //             [
-  //               t.templateElement({
-  //                 raw: '',
-  //                 cooked: '',
-  //               }, false),
-  //               t.templateElement({
-  //                 raw: ' ',
-  //                 cooked: ' ',
-  //               }, false),
-  //               t.templateElement({
-  //                 raw: ' ',
-  //                 cooked: ' ',
-  //               }, false),
-  //               t.templateElement({
-  //                 raw: '',
-  //                 cooked: '',
-  //               }, false),
-  //             ],
-  //             [
-  //               t.identifier('src'),
-  //               t.identifier('src2x'),
-  //               t.identifier('src3x'),
-  //             ]
-  //           ),
-  //           t.identifier('trim'),
-  //         ),
-  //         []
-  //       )
-  //     )
-  //   ]
-  // )
-
+  /*
+    if (src2x) srcSet += `, ${src2x}`
+    if (src3x) srcSet += `, ${src3x}`
+   */
   const ifStatements = [ 2,3 ].map((num) =>
     t.ifStatement(
       t.identifier(`src${num}x`),
@@ -172,8 +136,8 @@ export default function (babel) {
           t.templateLiteral(
             [
               t.templateElement({
-                raw: ' ',
-                cooked: ' ',
+                raw: ', ',
+                cooked: ', ',
               }, false),
               t.templateElement({
                 raw: '',
@@ -189,6 +153,9 @@ export default function (babel) {
     )
   )
 
+  /*
+    return { src, srcSet }
+   */
   const returnStatement = t.returnStatement(
     t.objectExpression(
       [
