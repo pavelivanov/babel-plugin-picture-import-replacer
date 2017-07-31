@@ -1,6 +1,6 @@
 {
   "name": "babel-plugin-picture-import-replacer",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Babel plugin for transforming picture import into variable contains src and srcSet",
   "author": {
     "name": "Pavel Ivanov",
