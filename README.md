@@ -1,6 +1,6 @@
-# babel-plugin-picture-import-replacer
+# babel-plugin-transform-picture-imports
 
-Babel plugin for transforming picture import into variable contains **`src`** and **`srcSet`**
+Babel plugin for transforming picture imports into variable contains 2x, 3x sizes
 
 **Transforms**
 
