@@ -2,6 +2,9 @@ export default function (babel) {
 
   const { types: t } = babel
 
+  const getSizes = (comment) =>
+    comment.replace('resolve picture', '').trim().replace(/x/g, '').split(' ')
+
   /*
     const imagePath = './images/icon.png';
    */
@@ -70,9 +73,8 @@ export default function (babel) {
     src2x = require(imagePath.replace(new RegExp("(.[a-z]+)$"), `@2x$1`));
     src3x = require(imagePath.replace(new RegExp("(.[a-z]+)$"), `@3x$1`));
    */
-  const declareSrcSizeAssignments = (specifiers) =>
-    specifiers.slice(1).map((specifier) => {
-      const size = specifier.local.name.replace('x', '')
+  const declareSrcSizeAssignments = (sizes) =>
+    sizes.map((size) => {
       const tplElementValue = `@${size}x$1`
 
       return t.expressionStatement(
@@ -179,24 +181,25 @@ export default function (babel) {
     visitor: {
 
       ImportDeclaration(path) {
-        const specifiers = path.node.specifiers
+        const comments = path.node.leadingComments
 
         if (
-          specifiers
-          && specifiers instanceof Array
-          && specifiers.length
-          && specifiers[0].type === 'ImportDefaultSpecifier'
-          && specifiers[0].local && specifiers[0].local.name === 'picture'
+          comments
+          && Array.isArray(comments)
+          && ~comments[comments.length - 1].value.indexOf('resolve picture')
         ) {
+          const specifiers            = path.node.specifiers
+          const imageName             = specifiers[0].local.name
           const imagePath             = path.node.source.value
+          const sizes                 = getSizes(comments[comments.length - 1].value)
           const imagePathAssignment   = declareImageAssignment(imagePath)
-          const srcSizeAssignments    = declareSrcSizeAssignments(specifiers)
+          const srcSizeAssignments    = declareSrcSizeAssignments(sizes)
 
           path.replaceWith(t.variableDeclaration(
             'const',
             [
               t.variableDeclarator(
-                t.identifier('picture'),
+                t.identifier(imageName),
                 t.callExpression(
                   t.arrowFunctionExpression(
                     [],

@@ -1,6 +1,11 @@
 import React from 'react'
 
-import picture, { x2, x3 } from './images/hamburger.svg'
+
+
+// resolve picture x2
+import logo from './images/logo.png'
+// resolve picture x2 x3
+import icon from './images/icon.png'
 
 
 class Page {
