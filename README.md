@@ -19,8 +19,8 @@ const logo = (() => {
   let src2x = "";
   let src3x = "";
   let srcSet = "";
-  const src = require(imagePath);
-  src2x = require(imagePath.replace(new RegExp("(.[a-z]+)$"), `@2x$1`));
+  const src = require(`${imagePath}`);
+  src2x = require(`${imagePath.replace(new RegExp("(.[a-z]+)$"), `@2x$1`)}`);
   srcSet = src;
 
   if (src2x)
@@ -40,9 +40,9 @@ const icon = (() => {
   let src2x = "";
   let src3x = "";
   let srcSet = "";
-  const src = require(imagePath);
-  src2x = require(imagePath.replace(new RegExp("(.[a-z]+)$"), `@2x$1`));
-  src3x = require(imagePath.replace(new RegExp("(.[a-z]+)$"), `@3x$1`));
+  const src = require(`${imagePath}`);
+  src2x = require(`${imagePath.replace(new RegExp("(.[a-z]+)$"), `@2x$1`)}`);
+  src3x = require(`${imagePath.replace(new RegExp("(.[a-z]+)$"), `@3x$1`)}`);
   srcSet = src;
 
   if (src2x)
