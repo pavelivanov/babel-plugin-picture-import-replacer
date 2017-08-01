@@ -20,8 +20,8 @@ export default function (babel) {
     )
 
   /*
-    let src2x = '';
-    let src3x = '';
+    let src2x;
+    let src3x;
     let srcSet = '';
    */
   const srcSizeVariables = [
@@ -30,7 +30,6 @@ export default function (babel) {
       [
         t.variableDeclarator(
           t.identifier('src2x'),
-          t.stringLiteral(''),
         ),
       ]
     ),
@@ -39,7 +38,6 @@ export default function (babel) {
       [
         t.variableDeclarator(
           t.identifier('src3x'),
-          t.stringLiteral(''),
         ),
       ]
     ),
@@ -63,7 +61,21 @@ export default function (babel) {
       t.callExpression(
         t.identifier('require'),
         [
-          t.identifier('imagePath')
+          t.templateLiteral(
+            [
+              t.templateElement({
+                raw: '',
+                cooked: '',
+              }, false),
+              t.templateElement({
+                raw: '',
+                cooked: '',
+              }, true),
+            ],
+            [
+              t.identifier('imagePath'),
+            ]
+          )
         ]
       )
     ),
@@ -84,27 +96,41 @@ export default function (babel) {
           t.callExpression(
             t.identifier('require'),
             [
-              t.callExpression(
-                t.memberExpression(
-                  t.identifier('imagePath'),
-                  t.identifier('replace'),
-                ),
+              t.templateLiteral(
                 [
-                  t.newExpression(
-                    t.identifier('RegExp'),
+                  t.templateElement({
+                    raw: '',
+                    cooked: '',
+                  }, false),
+                  t.templateElement({
+                    raw: '',
+                    cooked: '',
+                  }, true),
+                ],
+                [
+                  t.callExpression(
+                    t.memberExpression(
+                      t.identifier('imagePath'),
+                      t.identifier('replace'),
+                    ),
                     [
-                      t.stringLiteral('(\.[a-z]+)$')
+                      t.newExpression(
+                        t.identifier('RegExp'),
+                        [
+                          t.stringLiteral('(\.[a-z]+)$')
+                        ]
+                      ),
+                      t.templateLiteral(
+                        [
+                          t.templateElement({
+                            raw: tplElementValue,
+                            cooked: tplElementValue,
+                          }, true),
+                        ],
+                        []
+                      )
                     ]
                   ),
-                  t.templateLiteral(
-                    [
-                      t.templateElement({
-                        raw: tplElementValue,
-                        cooked: tplElementValue,
-                      }, true),
-                    ],
-                    []
-                  )
                 ]
               )
             ]
@@ -125,12 +151,12 @@ export default function (babel) {
   )
 
   /*
-    if (src2x) srcSet += `, ${src2x}`
-    if (src3x) srcSet += `, ${src3x}`
+    if (src2x) srcSet += `, ${src2x} 2x`
+    if (src3x) srcSet += `, ${src3x} 3x`
    */
-  const ifStatements = [ 2,3 ].map((num) =>
+  const ifStatements = [ 2, 3 ].map((size) =>
     t.ifStatement(
-      t.identifier(`src${num}x`),
+      t.identifier(`src${size}x`),
       t.expressionStatement(
         t.assignmentExpression(
           '+=',
@@ -142,12 +168,12 @@ export default function (babel) {
                 cooked: ', ',
               }, false),
               t.templateElement({
-                raw: '',
-                cooked: '',
+                raw: ` ${size}x`,
+                cooked: ` ${size}x`,
               }, true),
             ],
             [
-              t.identifier(`src${num}x`),
+              t.identifier(`src${size}x`),
             ]
           )
         )
@@ -180,13 +206,24 @@ export default function (babel) {
   return {
     visitor: {
 
+      Program: {
+        exit(path) {
+          path.traverse({
+            enter(path) {
+              t.removeComments(path.node);
+            }
+          })
+        }
+      },
+
       ImportDeclaration(path) {
         const comments = path.node.leadingComments
 
         if (
           comments
           && Array.isArray(comments)
-          && ~comments[comments.length - 1].value.indexOf('resolve picture')
+          && comments.length
+          && /\s?resolve picture/.test(comments[comments.length - 1].value)
         ) {
           const specifiers            = path.node.specifiers
           const imageName             = specifiers[0].local.name
