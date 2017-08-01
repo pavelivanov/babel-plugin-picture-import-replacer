@@ -24,10 +24,10 @@ const logo = (() => {
   srcSet = src;
 
   if (src2x)
-    srcSet += `, ${src2x}`;
+    srcSet += `, ${src2x} 2x`;
 
   if (src3x)
-    srcSet += `, ${src3x}`;
+    srcSet += `, ${src3x} 3x`;
 
   return {
     src,
@@ -46,10 +46,10 @@ const icon = (() => {
   srcSet = src;
 
   if (src2x)
-    srcSet += `, ${src2x}`;
+    srcSet += `, ${src2x} 2x`;
 
   if (src3x)
-    srcSet += `, ${src3x}`;
+    srcSet += `, ${src3x} 3x`;
 
   return {
     src,
